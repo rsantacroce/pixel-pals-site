@@ -159,8 +159,20 @@
     font-size: .92rem; line-height: 1.6; margin: 0; border: 3px solid var(--ink);
   }
   pre .c { color: #a79ff0; }
-  .get ul { padding-left: 1.2em; color: var(--muted); }
-  .get li { margin-bottom: 8px; }
+  .downloads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dl {
+    display: block; padding: 14px 16px; border-radius: 16px; text-decoration: none;
+    background: var(--card); color: var(--ink); border: 3px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink); transition: transform .08s, box-shadow .08s;
+  }
+  .dl:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+  .dl:first-child { background: var(--accent); color: var(--accent-ink); }
+  .dl strong { display: block; font-weight: 900; font-size: 1.05rem; }
+  .dl span { font-size: .88rem; opacity: .8; }
+  .note { color: var(--muted); font-size: .92rem; margin-top: 18px; }
+  .get pre { margin-top: 64px; }
+  @media (max-width: 900px) { .get pre { margin-top: 0; } }
+  footer .lic { display: block; margin-top: 4px; }
 
   footer { padding: 36px 0 48px; color: var(--muted); text-align: center; font-size: .95rem; }
 
@@ -321,19 +333,18 @@
   <div class="wrap get">
     <div>
       <h2>Get Pixel Pals</h2>
-      <p class="sub" style="margin-bottom:20px">Pixel Pals is open source. You can build it from the code on GitHub. It runs on:</p>
-      <ul>
-        <li><strong>Android</strong>: phones and tablets</li>
-        <li><strong>macOS</strong>: DMG installer</li>
-        <li><strong>Windows</strong>: MSI installer</li>
-        <li><strong>Linux</strong>: DEB package</li>
-      </ul>
-      <div class="ctas" style="margin-top:24px">
-        <a class="btn primary" href="https://github.com/rsantacroce/pixel-pals">Source on GitHub</a>
-        <a class="btn secondary" href="https://github.com/rsantacroce/pixel-pals#build-and-run">Build instructions</a>
+      <p class="sub" style="margin-bottom:20px">Free and open source. Pick your device:</p>
+      <div class="downloads">
+        <a class="dl" href="https://github.com/rsantacroce/pixel-pals/releases/latest/download/PixelPals-android.apk"><strong>Android</strong><span>APK · Android 8.0+</span></a>
+        <a class="dl" href="https://github.com/rsantacroce/pixel-pals/releases/latest/download/PixelPals-windows.msi"><strong>Windows</strong><span>MSI installer</span></a>
+        <a class="dl" href="https://github.com/rsantacroce/pixel-pals/releases/latest/download/PixelPals-macos-apple-silicon.dmg"><strong>macOS</strong><span>Apple Silicon (M1 and newer)</span></a>
+        <a class="dl" href="https://github.com/rsantacroce/pixel-pals/releases/latest/download/PixelPals-macos-intel.dmg"><strong>macOS</strong><span>Intel</span></a>
+        <a class="dl" href="https://github.com/rsantacroce/pixel-pals/releases/latest/download/PixelPals-linux.deb"><strong>Linux</strong><span>DEB · Debian / Ubuntu</span></a>
+        <a class="dl" href="https://github.com/rsantacroce/pixel-pals/releases/latest"><strong>All releases</strong><span>Notes and checksums</span></a>
       </div>
+      <p class="note">The desktop installers aren't code-signed yet, so Windows and macOS may show a warning the first time. The <a href="https://github.com/rsantacroce/pixel-pals/releases/latest">release notes</a> explain how to open them.</p>
     </div>
-    <pre><span class="c"># You need JDK 21</span>
+    <pre><span class="c"># Or build it yourself (JDK 21)</span>
 git clone https://github.com/rsantacroce/pixel-pals.git
 cd pixel-pals
 
@@ -347,7 +358,7 @@ cd pixel-pals
 
 <div class="pixels" aria-hidden="true"></div>
 <footer>
-  <div class="wrap">Pixel Pals · Made with Kotlin Multiplatform and Compose · <a href="https://github.com/rsantacroce/pixel-pals">GitHub</a></div>
+  <div class="wrap">Pixel Pals · Made with Kotlin Multiplatform and Compose · <a href="https://github.com/rsantacroce/pixel-pals">GitHub</a><span class="lic">Open source under the <a href="https://github.com/rsantacroce/pixel-pals/blob/main/LICENSE">Apache License 2.0</a></span></div>
 </footer>
 
 <dialog id="lightbox" aria-label="Screenshot"><img alt=""></dialog>
