@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixel Pals</title>
+<meta name="description" content="A kid-friendly pixel art editor for Android and desktop. Offline, no ads, no accounts. Big buttons, mirror mode, stamps, coloring pages, challenges and animation.">
+<meta property="og:title" content="Pixel Pals: pixel art for kids">
+<meta property="og:description" content="A kid-friendly pixel art editor for Android and desktop. Offline, no ads, no accounts.">
+<meta property="og:image" content="assets/screenshots/desktop-editor.png">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff8ec;
+    --surface: #f4efff;
+    --card: #ffffff;
+    --ink: #221f35;
+    --muted: #5d5873;
+    --accent: #5b3cf5;
+    --accent-ink: #ffffff;
+    --orange: #ff8a1f;
+    --pink: #ff6fa8;
+    --green: #3cc152;
+    --yellow: #ffd43b;
+    --border: #e6e0f5;
+    --shadow: 0 10px 30px rgba(60, 40, 140, .12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17152a;
+      --surface: #211e38;
+      --card: #2a2645;
+      --ink: #f4f1ff;
+      --muted: #b6b0d4;
+      --accent: #8d75ff;
+      --border: #3a3560;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17152a;
+    --surface: #211e38;
+    --card: #2a2645;
+    --ink: #f4f1ff;
+    --muted: #b6b0d4;
+    --accent: #8d75ff;
+    --border: #3a3560;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .4);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-weight: 600;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* Pixel strip used as a divider */
+  .pixels {
+    height: 12px;
+    background:
+      linear-gradient(90deg,
+        var(--accent) 0 12.5%, var(--orange) 0 25%, var(--yellow) 0 37.5%, var(--green) 0 50%,
+        var(--pink) 0 62.5%, var(--accent) 0 75%, var(--orange) 0 87.5%, var(--green) 0 100%);
+    background-size: 96px 12px;
+    image-rendering: pixelated;
+  }
+
+  header.top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 0;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 900; font-size: 1.25rem; }
+  .brand img { width: 40px; height: 40px; image-rendering: pixelated; border-radius: 10px; }
+  nav a { margin-left: 18px; color: var(--muted); text-decoration: none; font-weight: 800; }
+  nav a:hover { color: var(--accent); }
+
+  .hero { padding: 40px 0 64px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  .eyebrow {
+    display: inline-block; background: var(--surface); color: var(--accent);
+    border: 2px solid var(--border); border-radius: 999px; padding: 4px 14px;
+    font-weight: 800; font-size: .9rem; margin-bottom: 18px;
+  }
+  h1 { font-size: clamp(2.4rem, 5.5vw, 4rem); line-height: 1.05; margin: 0 0 18px; font-weight: 900; letter-spacing: -.02em; }
+  h1 .hl { color: var(--accent); }
+  .lead { font-size: 1.2rem; color: var(--muted); margin: 0 0 28px; max-width: 34em; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px; border-radius: 16px; font-weight: 900; font-size: 1.05rem;
+    text-decoration: none; border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink); transition: transform .08s, box-shadow .08s;
+  }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--ink); }
+  .btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn.secondary { background: var(--card); color: var(--ink); }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 26px; color: var(--muted); font-size: .95rem; }
+  .badges span::before { content: "■ "; color: var(--green); }
+
+  .hero-shots { position: relative; }
+  .hero-shots .desk {
+    border-radius: 18px; border: 3px solid var(--ink); box-shadow: var(--shadow);
+  }
+  .hero-shots .phone {
+    position: absolute; width: 30%; right: -14px; bottom: -40px;
+    border-radius: 22px; border: 3px solid var(--ink); box-shadow: var(--shadow);
+    background: var(--card);
+  }
+
+  section { padding: 72px 0; }
+  section.alt { background: var(--surface); }
+  h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 900; margin: 0 0 12px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: 1.1rem; margin: 0 0 40px; max-width: 40em; }
+
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feature {
+    background: var(--card); border: 2px solid var(--border); border-radius: 20px; padding: 24px;
+  }
+  .feature .ico {
+    width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+    font-size: 1.4rem; margin-bottom: 14px; border: 2px solid var(--ink);
+  }
+  .feature h3 { margin: 0 0 6px; font-size: 1.2rem; font-weight: 900; }
+  .feature p { margin: 0; color: var(--muted); }
+
+  .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .shot { margin: 0; }
+  .shot img {
+    border-radius: 16px; border: 3px solid var(--ink); box-shadow: var(--shadow);
+    cursor: zoom-in; background: var(--card);
+  }
+  .shot figcaption { margin-top: 10px; color: var(--muted); font-weight: 800; }
+  .phones { display: grid; grid-template-columns: repeat(2, minmax(0, 260px)); gap: 24px; justify-content: center; margin-top: 32px; }
+  .phones .shot img { border-radius: 26px; }
+
+  .trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .trust div {
+    background: var(--card); border: 2px solid var(--border); border-radius: 20px; padding: 22px; text-align: center;
+  }
+  .trust strong { display: block; font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; }
+  .trust span { color: var(--muted); font-size: .95rem; }
+
+  .get { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  pre {
+    background: #221f35; color: #f4f1ff; border-radius: 16px; padding: 20px; overflow-x: auto;
+    font-size: .92rem; line-height: 1.6; margin: 0; border: 3px solid var(--ink);
+  }
+  pre .c { color: #a79ff0; }
+  .get ul { padding-left: 1.2em; color: var(--muted); }
+  .get li { margin-bottom: 8px; }
+
+  footer { padding: 36px 0 48px; color: var(--muted); text-align: center; font-size: .95rem; }
+
+  /* Lightbox */
+  dialog {
+    border: 0; padding: 0; background: transparent; max-width: 95vw; max-height: 95vh;
+  }
+  dialog::backdrop { background: rgba(20, 16, 40, .85); }
+  dialog img { max-width: 95vw; max-height: 90vh; border-radius: 12px; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 16px; }
+    .hero-shots { margin-bottom: 40px; }
+    .hero-shots .phone { right: 0; }
+    .features { grid-template-columns: 1fr 1fr; }
+    .trust { grid-template-columns: 1fr 1fr; }
+    .get { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    nav { display: none; }
+    .features, .gallery { grid-template-columns: 1fr; }
+    .phones { grid-template-columns: 1fr 1fr; gap: 14px; }
+    section { padding: 52px 0; }
+    .hero-shots .phone { width: 34%; bottom: -30px; }
+  }
+</style>
+</head>
+<body>
+<div class="pixels" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><img src="assets/icon.png" alt="">Pixel Pals</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#screenshots">Screenshots</a>
+      <a href="#get">Get it</a>
+      <a href="https://github.com/rsantacroce/pixel-pals">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <span class="eyebrow">For kids aged about 5 to 12</span>
+      <h1>Make <span class="hl">pixel art</span>, one square at a time.</h1>
+      <p class="lead">Pixel Pals is a friendly pixel art editor for Android and desktop. It has big buttons with words under them, a mirror mode, stamps, coloring pages, "copy the picture" challenges and simple animation. Everything saves on its own.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#get">Get Pixel Pals</a>
+        <a class="btn secondary" href="https://github.com/rsantacroce/pixel-pals">View on GitHub</a>
+      </div>
+      <div class="badges">
+        <span>Works offline</span><span>No ads</span><span>No accounts</span><span>Open source</span>
+      </div>
+    </div>
+    <div class="hero-shots">
+      <img class="desk" src="assets/screenshots/desktop-editor.png" width="1280" height="800" alt="The Pixel Pals editor on desktop, showing a drawing of a cat, hearts and flowers with tools on the left and colors on the right">
+      <img class="phone" src="assets/screenshots/phone-editor.png" width="540" height="1140" alt="The same drawing in the Pixel Pals editor on a phone">
+    </div>
+  </div>
+</div>
+
+<section id="features" class="alt">
+  <div class="wrap">
+    <h2>Everything a young artist needs</h2>
+    <p class="sub">The tools are simple enough for a five-year-old and still fun for an older kid who wants to make sprites and little animations.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="ico" style="background:var(--yellow)">✏️</div>
+        <h3>Friendly tools</h3>
+        <p>Pencil, eraser, fill, picker, line, box, circle, move, pattern brush and color swap, each with a big icon and a label.</p>
+      </div>
+      <div class="feature">
+        <div class="ico" style="background:var(--pink)">🪞</div>
+        <h3>Mirror mode</h3>
+        <p>Draw on one side and it appears on the other, left-right, top-bottom or both. Hearts and butterflies come out perfect.</p>
+      </div>
+      <div class="feature">
+        <div class="ico" style="background:var(--green)">🎨</div>
+        <h3>Lots of colors</h3>
+        <p>A 24-color palette plus Rainbow, Pastel, Forest, Ocean and Retro 8-bit sets, a color mixer and a "My Colors" row.</p>
+      </div>
+      <div class="feature">
+        <div class="ico" style="background:var(--orange)">⭐</div>
+        <h3>Challenges and coloring pages</h3>
+        <p>Copy a picture square by square and watch the match score climb (with confetti), or fill in ready-made coloring pages.</p>
+      </div>
+      <div class="feature">
+        <div class="ico" style="background:#9fd0ff">🎞️</div>
+        <h3>Animation</h3>
+        <p>Add frames, see the last one faintly with onion skin, and play it back. Export as a GIF or a sprite sheet.</p>
+      </div>
+      <div class="feature">
+        <div class="ico" style="background:#c8b6ff">💾</div>
+        <h3>Never lose a drawing</h3>
+        <p>There's no Save button. Drawings save automatically, undo goes back 200 steps, and deleted art waits 30 days in a Recycle Bin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="screenshots">
+  <div class="wrap">
+    <h2>Take a look</h2>
+    <p class="sub">The same app runs on phones, tablets and computers, in a light or dark theme. Click any picture to make it bigger.</p>
+    <div class="gallery">
+      <figure class="shot">
+        <img src="assets/screenshots/desktop-gallery.png" width="1280" height="800" loading="lazy" alt="The gallery showing saved drawings">
+        <figcaption>The gallery keeps every drawing</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/screenshots/desktop-new.png" width="1280" height="800" loading="lazy" alt="Picking a size or a coloring page for a new drawing">
+        <figcaption>Start blank, from a coloring page or a challenge</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/screenshots/desktop-challenge.png" width="1280" height="800" loading="lazy" alt="A copy-the-picture challenge with a star to copy">
+        <figcaption>"Copy this!" challenges</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/screenshots/desktop-coloring.png" width="1280" height="800" loading="lazy" alt="A coloring page in the editor">
+        <figcaption>Coloring pages</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/screenshots/desktop-editor-dark.png" width="1280" height="800" loading="lazy" alt="The editor in dark theme">
+        <figcaption>Dark theme</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/screenshots/tablet-editor.png" width="1280" height="800" loading="lazy" alt="The editor on a tablet">
+        <figcaption>Tablet layout</figcaption>
+      </figure>
+    </div>
+    <div class="phones">
+      <figure class="shot">
+        <img src="assets/screenshots/phone-editor.png" width="540" height="1140" loading="lazy" alt="The editor on a phone">
+        <figcaption>Drawing on a phone</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/screenshots/phone-gallery.png" width="540" height="1140" loading="lazy" alt="The gallery on a phone">
+        <figcaption>Gallery on a phone</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Made for kids, built for parents</h2>
+    <p class="sub">Pixel Pals doesn't talk to the internet at all. The Android app doesn't even ask for internet permission.</p>
+    <div class="trust">
+      <div><strong>100% offline</strong><span>No network calls, ever</span></div>
+      <div><strong>No ads or tracking</strong><span>No analytics, no accounts</span></div>
+      <div><strong>Grown-ups area</strong><span>Settings sit behind a quick math question</span></div>
+      <div><strong>Sharp exports</strong><span>PNG at up to 16×, plus GIF and ZIP backup</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="get">
+  <div class="wrap get">
+    <div>
+      <h2>Get Pixel Pals</h2>
+      <p class="sub" style="margin-bottom:20px">Pixel Pals is open source. You can build it from the code on GitHub. It runs on:</p>
+      <ul>
+        <li><strong>Android</strong>: phones and tablets</li>
+        <li><strong>macOS</strong>: DMG installer</li>
+        <li><strong>Windows</strong>: MSI installer</li>
+        <li><strong>Linux</strong>: DEB package</li>
+      </ul>
+      <div class="ctas" style="margin-top:24px">
+        <a class="btn primary" href="https://github.com/rsantacroce/pixel-pals">Source on GitHub</a>
+        <a class="btn secondary" href="https://github.com/rsantacroce/pixel-pals#build-and-run">Build instructions</a>
+      </div>
+    </div>
+    <pre><span class="c"># You need JDK 21</span>
+git clone https://github.com/rsantacroce/pixel-pals.git
+cd pixel-pals
+
+<span class="c"># Run on desktop</span>
+./gradlew :desktopApp:run
+
+<span class="c"># Build the Android app</span>
+./gradlew :androidApp:assembleDebug</pre>
+  </div>
+</section>
+
+<div class="pixels" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">Pixel Pals · Made with Kotlin Multiplatform and Compose · <a href="https://github.com/rsantacroce/pixel-pals">GitHub</a></div>
+</footer>
+
+<dialog id="lightbox" aria-label="Screenshot"><img alt=""></dialog>
+<script>
+  const box = document.getElementById('lightbox');
+  const big = box.querySelector('img');
+  document.querySelectorAll('.shot img, .hero-shots img').forEach(img => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', () => {
+      big.src = img.src;
+      big.alt = img.alt;
+      box.showModal();
+    });
+  });
+  box.addEventListener('click', () => box.close());
+</script>
+</body>
+</html>
